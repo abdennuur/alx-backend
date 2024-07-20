@@ -20,8 +20,8 @@ class Server:
         """The Cached dataset
         """
         if self.__dataset is None:
-            with open(self.DATA_FILE) as f:
-                reader = csv.reader(f)
+            with open(self.DATA_FILE) as fl:
+                reader = csv.reader(fl)
                 dataset = [row for row in reader]
             self.__dataset = dataset[1:]
 
@@ -45,15 +45,15 @@ class Server:
         data = self.indexed_dataset()
         assert index is not None and index >= 0 and index <= max(data.keys())
         page_data = []
-        data_cnt = 0
+        data_count = 0
         next_index = None
         strt = index if index else 0
         for ix, item in data.items():
-            if ix >= strt and data_cnt < page_size:
+            if ix >= strt and data_count < page_size:
                 page_data.append(item)
-                data_cnt += 1
+                data_count += 1
                 continue
-            if data_cnt == page_size:
+            if data_count == page_size:
                 next_index = ix
                 break
         page_info = {
