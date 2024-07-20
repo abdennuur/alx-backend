@@ -34,7 +34,7 @@ class Server:
             dataset = self.dataset()
             truncated_dataset = dataset[:1000]
             self.__indexed_dataset = {
-                ix: dataset[ix] for ix in range(len(dataset))
+                i: dataset[i] for i in range(len(dataset))
             }
         return self.__indexed_dataset
 
@@ -48,13 +48,13 @@ class Server:
         data_count = 0
         next_index = None
         strt = index if index else 0
-        for ix, item in data.items():
-            if ix >= strt and data_count < page_size:
+        for i, item in data.items():
+            if i >= strt and data_count < page_size:
                 page_data.append(item)
                 data_count += 1
                 continue
             if data_count == page_size:
-                next_index = ix
+                next_index = i
                 break
         page_info = {
             'index': index,
