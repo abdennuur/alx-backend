@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Hypermedia pagination sample.
+"""The Hypermedia pagination sample.
 """
 import csv
 import math
@@ -7,30 +7,30 @@ from typing import Dict, List, Tuple
 
 
 def index_range(page: int, page_size: int) -> Tuple[int, int]:
-    """Retrieves the index range from a given page and page size.
+    """Retrieve index range from a given page and page size.
     """
-    start = (page - 1) * page_size
-    end = start + page_size
-    return (start, end)
+    strt = (page - 1) * page_size
+    nd = strt + page_size
+    return (strt, nd)
 
 
 class Server:
-    """Server class to paginate a database of popular baby names.
+    """A Server class to paginate database of popular baby names.
     """
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self):
-        """Initializes a new Server instance.
+        """Initialize new Server instance.
         """
         self.__dataset = None
 
     def dataset(self) -> List[List]:
-        """Cached dataset
+        """Cached the dataset
         """
         if self.__dataset is None:
             with open(self.DATA_FILE) as f:
-                reader = csv.reader(f)
-                dataset = [row for row in reader]
+                rdr = csv.rdr(f)
+                dataset = [row for row in rdr]
             self.__dataset = dataset[1:]
 
         return self.__dataset
@@ -47,7 +47,7 @@ class Server:
         return data[strt:nd]
 
     def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict:
-        """Retrieves information about a page.
+        """Retrieve information about  page.
         """
         page_data = self.get_page(page, page_size)
         start, end = index_range(page, page_size)
