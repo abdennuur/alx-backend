@@ -26,8 +26,8 @@ class Server:
         """The cached dataset
         """
         if self.__dataset is None:
-            with open(self.DATA_FILE) as f:
-                reader = csv.reader(f)
+            with open(self.DATA_FILE) as fl:
+                reader = csv.reader(fl)
                 dataset = [row for row in reader]
             self.__dataset = dataset[1:]
 
@@ -38,11 +38,11 @@ class Server:
         """
         assert type(page) == int and type(page_size) == int
         assert page > 0 and page_size > 0
-        strt, nd = index_range(page, page_size)
+        start, end = index_range(page, page_size)
         data = self.dataset()
-        if strt > len(data):
+        if start > len(data):
             return []
-        return data[strt:nd]
+        return data[start:end]
 
     def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
         """retrieve info about  page frm a given index and with a
