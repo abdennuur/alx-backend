@@ -49,7 +49,7 @@ class Server:
         next_index = None
         strt = index if index else 0
         for ix, item in data.items():
-            if ix >= strt and data_count < page_size:
+            if ix >= strt and data_cnt < page_size:
                 page_data.append(item)
                 data_cnt += 1
                 continue
