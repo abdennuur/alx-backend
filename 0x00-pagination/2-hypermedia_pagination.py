@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Task 2
+"""Task 2: Hypermedia pagination
 """
 
 import csv
@@ -8,7 +8,7 @@ from typing import Dict, List, Tuple
 
 
 def index_range(page: int, page_size: int) -> Tuple[int, int]:
-    """To retrieve index range from a given page and page size.
+    """Retrieves the index range from a given page and page size.
     """
 
     return ((page - 1) * page_size, ((page - 1) * page_size) + page_size)
@@ -27,34 +27,34 @@ class Server:
         """
         if self.__dataset is None:
             with open(self.DATA_FILE) as f:
-                rdr = csv.rdr(f)
-                dataset = [row for row in rdr]
+                reader = csv.reader(f)
+                dataset = [row for row in reader]
             self.__dataset = dataset[1:]
 
         return self.__dataset
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
-        """Retrieve a page of data.
+        """Retrieves a page of data.
         """
         assert type(page) == int and type(page_size) == int
         assert page > 0 and page_size > 0
-        strt, nd = index_range(page, page_size)
+        start, end = index_range(page, page_size)
         data = self.dataset()
-        if strt > len(data):
+        if start > len(data):
             return []
-        return data[strt:nd]
+        return data[start:end]
 
     def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict:
-        """Retrieve information about  page.
+        """Retrieves information about a page.
         """
         data = self.get_page(page, page_size)
-        strt, nd = index_range(page, page_size)
+        start, end = index_range(page, page_size)
         total_pages = math.ceil(len(self.__dataset) / page_size)
         return {
             'page_size': len(data),
             'page': page,
             'data': data,
-            'next_page': page + 1 if nd < len(self.__dataset) else None,
-            'prev_page': page - 1 if strt > 0 else None,
+            'next_page': page + 1 if end < len(self.__dataset) else None,
+            'prev_page': page - 1 if start > 0 else None,
             'total_pages': total_pages
         }
