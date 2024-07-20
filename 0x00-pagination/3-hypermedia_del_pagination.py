@@ -1,59 +1,65 @@
 #!/usr/bin/env python3
-"""Deletion-resilient hypermedia pagination
+"""Task 3: Deletion-resilient hypermedia pagination
 """
+
 import csv
-from typing import Dict, List
+import math
+from typing import Dict, List, Tuple
+
+
+def index_range(page: int, page_size: int) -> Tuple[int, int]:
+    """Retrieve index range frm a given page and page size.
+    """
+
+    return ((page - 1) * page_size, ((page - 1) * page_size) + page_size)
 
 
 class Server:
-    """THE server class to paginate database of popular baby names.
+    """The server class to paginate a database of popular baby names.
     """
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self):
-        """Initialize new Server instance.
-        """
         self.__dataset = None
-        self.__indexed_dataset = None
 
     def dataset(self) -> List[List]:
-        """The Cached dataset
+        """The cached dataset
         """
         if self.__dataset is None:
-            with open(self.DATA_FILE) as fl:
-                reader = csv.reader(fl)
+            with open(self.DATA_FILE) as ff:
+                reader = csv.reader(ff)
                 dataset = [row for row in reader]
             self.__dataset = dataset[1:]
 
         return self.__dataset
 
-    def indexed_dataset(self) -> Dict[int, List]:
-        """Dataset indexed by the sorting position, starting at 0
+    def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
+        """Retrieve a page of data.
         """
-        if self.__indexed_dataset is None:
-            dataset = self.dataset()
-            truncated_dataset = dataset[:1000]
-            self.__indexed_dataset = {
-                i: dataset[i] for i in range(len(dataset))
-            }
-        return self.__indexed_dataset
+        assert type(page) == int and type(page_size) == int
+        assert page > 0 and page_size > 0
+        strt, nd = index_range(page, page_size)
+        data = self.dataset()
+        if strt > len(data):
+            return []
+        return data[strt:nd]
 
     def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
-        """Retrieve info about page frm a given index and with 
+        """retrieve info about  page frm a given index and with a
         a specified size.
         """
         data = self.indexed_dataset()
         assert index is not None and index >= 0 and index <= max(data.keys())
         page_data = []
-        data_count = 0
+        data_cnt = 0
         next_index = None
-        strt = index if index else 0
+        start = index if index else 0
         for i, item in data.items():
-            if i >= strt and data_count < page_size:
+            if i >= start and data_cnt < page_size:
                 page_data.append(item)
-                data_count += 1
+                data_cnt += 1
                 continue
-            if data_count == page_size:
+            if data_cnt == page_size:
                 next_index = i
                 break
         page_info = {
